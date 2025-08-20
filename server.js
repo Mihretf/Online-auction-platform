@@ -1,3 +1,4 @@
+
 // server.js
 
 // 1. Load environment variables
@@ -28,6 +29,8 @@ connectDB(); // logs success or exits if fails
 app.use('/api/items', itemRoutes);      // All item routes prefixed with /api/items
 app.use('/api/auctions', auctionRoutes); // All auction routes prefixed with /api/auctions
 app.use("/api/auth", require("./routes/authRoutes"));
+// Example: attach bids route
+app.use("/api/bids", require("./routes/bidRoutes"));
 // 8. Default test route to check if server is running
 app.get('/', (req, res) => {
     res.status(200).json({ message: 'Auction API is running...' });
@@ -48,3 +51,4 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
+
