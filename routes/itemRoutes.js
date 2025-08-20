@@ -23,10 +23,10 @@ router.get('/', itemController.getAllItems);
 router.get('/:id', itemController.getItemById);
 
 // Update item
-router.patch('/:id', authMiddleware, itemController.updateItem);
+router.patch('/:id', itemController.updateItem);
 
 // Delete item
-router.delete('/:id', authMiddleware, itemController.deleteItem);
+router.delete('/:id', itemController.deleteItem);
 
 
 module.exports = router;

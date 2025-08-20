@@ -4,7 +4,7 @@ const auctionController = require('../controllers/auctionController');
 const authMiddleware = require('../middleware/auth');
 
 // Create a new auction
-router.post('/', authMiddleware, auctionController.createAuction);
+router.post('/', auctionController.createAuction);
 
 // Get all auctions
 router.get('/', auctionController.getAllAuctions);
@@ -13,9 +13,9 @@ router.get('/', auctionController.getAllAuctions);
 router.get('/:id', auctionController.getAuctionById);
 
 // Update auction
-router.patch('/:id', authMiddleware, auctionController.updateAuction);
+router.patch('/:id', auctionController.updateAuction);
 
 // Delete auction
-router.delete('/:id', authMiddleware, auctionController.deleteAuction);
+router.delete('/:id', auctionController.deleteAuction);
 
 module.exports = router;
