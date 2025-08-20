@@ -27,7 +27,7 @@ connectDB(); // logs success or exits if fails
 // 7. Mount API routes
 app.use('/api/items', itemRoutes);      // All item routes prefixed with /api/items
 app.use('/api/auctions', auctionRoutes); // All auction routes prefixed with /api/auctions
-
+app.use("/api/auth", require("./routes/authRoutes"));
 // 8. Default test route to check if server is running
 app.get('/', (req, res) => {
     res.status(200).json({ message: 'Auction API is running...' });
@@ -44,7 +44,7 @@ app.use((err, req, res, next) => {
 });
 
 // 10. Start the server
-const PORT = process.env.PORT || 5001;
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });

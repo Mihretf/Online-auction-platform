@@ -8,15 +8,32 @@
     "start": "node server.js",
     "dev": "nodemon server.js"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Mihretf/Online-auction-platform.git"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Mihretf/Online-auction-platform/issues"
+  },
+  "homepage": "https://github.com/Mihretf/Online-auction-platform#readme",
   "dependencies": {
-    "dotenv": "^16.4.5",
-    "express": "^4.19.2",
+    "bcrypt": "^6.0.0",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.1",
+    "express": "^5.1.0",
+    "helmet": "^8.1.0",
+    "http-errors": "^2.0.0",
+    "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.18.0",
     "mongodb-memory-server": "^10.1.4",
     "mongoose": "^8.17.2",
-    "nodemon": "^3.1.10"
+    "morgan": "^1.10.1",
+    "multer": "^2.0.2",
+    "nodemon": "^3.1.10",
+    "zod": "^4.0.17"
   }
 }
