@@ -17,16 +17,16 @@ router.post('/', async (req, res) => {
 
 
 // Get all items
-router.get('/', itemController.getAllItems);
+router.get('/', authMiddleware, itemController.getAllItems);
 
 // Get single item by ID
-router.get('/:id', itemController.getItemById);
+router.get('/:id', authMiddleware, itemController.getItemById);
 
 // Update item
-router.patch('/:id', itemController.updateItem);
+router.patch('/:id', authMiddleware, itemController.updateItem);
 
 // Delete item
-router.delete('/:id', itemController.deleteItem);
+router.delete('/:id', authMiddleware,  itemController.deleteItem);
 
 
 module.exports = router;
