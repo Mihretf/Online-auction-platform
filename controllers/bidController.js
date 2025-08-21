@@ -1,5 +1,5 @@
 const Bid = require('../models/bidModel');
-const Auction = require('../models/auctionModel');
+const Auction = require('../models/AuctionsModel');
 
 // Place a bid on an auction item
 exports.placeBid = async (req, res) => {
@@ -20,11 +20,13 @@ exports.placeBid = async (req, res) => {
     }
 
     // Check if auction is still active
-    if (auction.status !== 'active') {
-      return res.status(400).json({ 
-        message: 'Cannot bid on inactive auction' 
-      });
-    }
+    // Check if auction is still active
+if (auction.status !== 'ongoing' && auction.status !== 'live') {
+  return res.status(400).json({ 
+    message: 'Cannot bid on inactive auction' 
+  });
+}
+
 
     // Check if bid amount is higher than current highest bid
     if (amount <= auction.currentBid) {

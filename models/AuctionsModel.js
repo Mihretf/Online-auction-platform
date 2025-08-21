@@ -21,7 +21,7 @@ const auctionSchema = new mongoose.Schema({
     //status of the auction: scheduled, ongoing, completed
     status:{
         type: String,
-        enum: ['scheduled', 'ongoing', 'completed'],
+        enum: ['scheduled', 'ongoing', 'completed', 'live'],
         default: 'scheduled',
     },
     //reference to the user who won the auction (optional)

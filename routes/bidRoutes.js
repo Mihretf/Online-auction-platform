@@ -1,10 +1,15 @@
-const express = require("express");
-const { placeBid } = require("../controllers/bidController");
-
+const express = require('express');
 const router = express.Router();
+const { authMiddleware } = require('../middleware/authMiddleware');
+const bidController = require('../controllers/bidController');
 
-// @route   POST /api/bids/place
-// @desc    Place a bid on an auction item
-router.post("/place", placeBid);
+// Place a new bid
+router.post('/', authMiddleware, bidController.placeBid);
+
+// Get all bids for a specific auction
+router.get('/auction/:auctionId', authMiddleware, bidController.getBidsForAuction);
+
+// Get all bids by the logged-in user
+router.get('/my-bids', authMiddleware, bidController.getUserBids);
 
 module.exports = router;

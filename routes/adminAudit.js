@@ -1,12 +1,12 @@
 const express = require('express');
-const router = express.Router();                // chore
+const router = express.Router();
 const AuditLog = require('../models/AuditLog');
-const { isAdmin } = require('../middleware/auth');
+const { authMiddleware, isAdmin } = require('../middleware/authMiddleware');
 
 // GET /api/admin/audit (Admin Only)
 // desc: List all recorded system actions
 // query: page, limit (optional)
-router.get('/', isAdmin, async (req, res) => {
+router.get('/', authMiddleware, isAdmin, async (req, res) => {
   try {
     const { page = 1, limit = 50 } = req.query;
     const skip = (Number(page) - 1) * Number(limit);
@@ -24,10 +24,10 @@ router.get('/', isAdmin, async (req, res) => {
       timestamp: l.timestamp
     }));
 
-    return res.status(200).json(payload);      // ✅ matches your successful response shape
+    return res.status(200).json(payload);
   } catch (err) {
     return res.status(500).json({ error: 'Failed to fetch audit logs' });
   }
 });
 
-module.exports = router;                       // chore
+module.exports = router;

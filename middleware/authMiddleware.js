@@ -18,4 +18,10 @@ const authMiddleware = (req, res, next) => {
   }
 };
 
-module.exports = authMiddleware;
+function isAdmin(req, res, next) {
+  const role = req.user.role; // e.g., "admin"
+  if (role === 'admin') return next();
+  return res.status(403).json({ error: 'Access denied. Admins only.' });
+}
+
+module.exports = { authMiddleware, isAdmin };
