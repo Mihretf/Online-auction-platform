@@ -15,6 +15,7 @@
   "keywords": [],
   "author": "Your Name",
   "license": "MIT",
+  "type": "commonjs",
   "bugs": {
     "url": "https://github.com/Mihretf/Online-auction-platform/issues"
   },
@@ -24,9 +25,8 @@
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^17.2.1",
-    "express": "^4.21.2",
-    "mongoose": "^8.17.2",
-    "mongos": "^0.0.0"
+    "express": "^5.1.0",
+    "mongoose": "^8.17.2"
   },
   "devDependencies": {
     "nodemon": "^3.1.10"
