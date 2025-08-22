@@ -1,50 +1,58 @@
-const itemService = require('../services/itemService'); // Import Item service functions
-const Item = require("../models/itemsModel")
-// Controller to create a new item
+
+const itemService = require('../services/itemService');
+
+// Create a new item
 async function createItem(req, res) {
-    const sellerId = req.user.id; // Get seller ID from authenticated user
-    itemService.createItem(req.body, sellerId) // Call service to create item
-        .then(newItem => res.status(201).json(newItem)) // Return created item with 201 status
-        .catch(error => res.status(400).json({ message: error.message })); // Handle errors
+    try {
+        const sellerId = req.user.id; // Authenticated user ID
+        const newItem = await itemService.createItem(req.body, sellerId);
+        res.status(201).json({ message: 'Item added successfully', item: newItem });
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
 }
 
-// async function createItem(itemData, sellerId) {
-//   // Use dummy ID if sellerId isn’t provided (since auth not ready yet)
-//   const dummySellerId = sellerId || "000000000000000000000000"; // valid 24-char ObjectId
-//   const newItem = await Item.create({ ...itemData, sellerId: dummySellerId });
-//   return newItem;
-// }
-
-
-// Controller to get all items
+// Get all items
 async function getAllItems(req, res) {
-    itemService.getAllItems(req.query) // Pass query parameters for filtering
-        .then(items => res.json(items)) // Return list of items
-        .catch(error => res.status(400).json({ message: error.message })); // Handle errors
+    try {
+        const items = await itemService.getAllItems(req.query); // Optional query filters
+        res.status(200).json(items);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
 }
 
-// Controller to get a single item by ID
+// Get single item by ID
 async function getItemById(req, res) {
-    itemService.getItemById(req.params.id) // Use item ID from URL params
-        .then(item => res.json(item)) // Return item with auction info
-        .catch(error => res.status(404).json({ message: error.message })); // 404 if not found
+    try {
+        const item = await itemService.getItemById(req.params.id);
+        res.status(200).json(item);
+    } catch (error) {
+        res.status(404).json({ message: error.message });
+    }
 }
 
-// Controller to update an item
+// Update an item
 async function updateItem(req, res) {
-    itemService.updateItem(req.params.id, req.user.id, req.body) // Pass item ID, seller ID, and update data
-        .then(updatedItem => res.json(updatedItem)) // Return updated item
-        .catch(error => res.status(400).json({ message: error.message })); // Handle errors
+    try {
+        const updatedItem = await itemService.updateItem(req.params.id, req.user.id, req.body);
+        res.status(200).json(updatedItem);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
 }
 
-// Controller to delete an item
+// Delete an item
 async function deleteItem(req, res) {
-    itemService.deleteItem(req.params.id, req.user) // Pass item ID and user info
-        .then(result => res.json(result)) // Return deletion confirmation
-        .catch(error => res.status(400).json({ message: error.message })); // Handle errors
+    try {
+        const result = await itemService.deleteItem(req.params.id, req.user);
+        res.status(200).json(result);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
 }
 
-// Export all controllers at the bottom
+// Export all controllers
 module.exports = {
     createItem,
     getAllItems,

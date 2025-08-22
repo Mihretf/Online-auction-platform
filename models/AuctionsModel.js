@@ -26,7 +26,7 @@ const auctionSchema = new mongoose.Schema({
     },
     //reference to the user who won the auction (optional)
     winnerId:{
-        type: mongoose.SchemaTypes.ObjectId, //object id pointing to the user model
+        type: mongoose.Schema.Types.ObjectId, //object id pointing to the user model
         ref: 'User',
         default: null
     },

@@ -1,32 +1,24 @@
 const express = require('express');
 const router = express.Router();
 const itemController = require('../controllers/itemController');
-const authMiddleware = require('../middleware/auth');
+const {authMiddleware} = require('../middleware/authMiddleware');
+
+// All item routes are protected by authentication
+router.use(authMiddleware);
 
 // Create a new item
-// router.post('/', authMiddleware, itemController.createItem);
-router.post('/', async (req, res) => {
-    try {
-        // for testing, manually provide a sellerId from your users collection
-        const newItem = await itemController.createItem(req.body);
-        res.status(201).json({ message: 'Item added successfully', item: newItem });
-    } catch (error) {
-        res.status(400).json({ error: error.message });
-    }
-});
-
+router.post('/', itemController.createItem);
 
 // Get all items
-router.get('/', authMiddleware, itemController.getAllItems);
+router.get('/', itemController.getAllItems);
 
-// Get single item by ID
-router.get('/:id', authMiddleware, itemController.getItemById);
+// Get a single item by ID
+router.get('/:id', itemController.getItemById);
 
-// Update item
-router.patch('/:id', authMiddleware, itemController.updateItem);
+// Update an item
+router.patch('/:id', itemController.updateItem);
 
-// Delete item
-router.delete('/:id', authMiddleware,  itemController.deleteItem);
-
+// Delete an item
+router.delete('/:id', itemController.deleteItem);
 
 module.exports = router;

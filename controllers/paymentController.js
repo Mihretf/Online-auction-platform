@@ -1,6 +1,6 @@
 const axios = require("axios");
 const Payment = require("../models/paymentModel");
-const Auction = require("../models/auctionModel");
+const Auction = require("../models/AuctionsModel");
 
 // --- Initiate Payment with Chapa ---
 exports.initiatePayment = async (req, res) => {
@@ -9,7 +9,7 @@ exports.initiatePayment = async (req, res) => {
     const userId = req.user.id;
 
     const auction = await Auction.findById(auctionId);
-    if (!auction || auction.status !== "closed") {
+    if (!auction || auction.status !== "completed") {
       return res.status(400).json({ message: "Auction not closed or invalid" });
     }
     if (auction.winnerId.toString() !== userId.toString()) {

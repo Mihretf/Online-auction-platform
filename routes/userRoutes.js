@@ -1,27 +1,28 @@
 const express = require('express');
 const { 
-  createUser, 
   getAllUsers, 
   getUserById,
-  loginUser 
-} = require('../controllers/userController');
+  updateUser,
+  deleteUser
+} = require('../controllers/userController'); // Only management functions
+const { authMiddleware, adminMiddleware } = require('../middleware/authMiddleware');
 
 const router = express.Router();
 
-// @route   POST /api/users
-// @desc    Create a new user
-router.post('/', createUser);
-
 // @route   GET /api/users
-// @desc    Get all users
-router.get('/', getAllUsers);
+// @desc    Get all users (admin only)
+router.get('/', authMiddleware, adminMiddleware, getAllUsers);
 
 // @route   GET /api/users/:id
-// @desc    Get user by ID
-router.get('/:id', getUserById);
+// @desc    Get user by ID (admin or self)
+router.get('/:id', authMiddleware, getUserById);
 
-// @route   POST /api/users/login
-// @desc    Login user and get JWT token
-router.post('/login', loginUser);
+// @route   PUT /api/users/:id
+// @desc    Update user (admin or self)
+router.put('/:id', authMiddleware, updateUser);
+
+// @route   DELETE /api/users/:id
+// @desc    Delete user (admin only)
+router.delete('/:id', authMiddleware, adminMiddleware, deleteUser);
 
 module.exports = router;

@@ -1,49 +1,84 @@
 const Auction = require('../models/AuctionsModel');
 const Item = require('../models/itemsModel');
+const Bid = require('../models/bidModel');
 
 // Create a new auction
 async function createAuction(auctionData) {
     const item = await Item.findById(auctionData.itemId);
     if (!item) throw new Error('Item not found');
+
     if (item.status !== 'approved') throw new Error('Item not approved');
-    const newAuction = await Auction.create({ ...auctionData });
+
+    if (!auctionData.startTime || !auctionData.endTime) {
+        throw new Error('Auction must have startTime and endTime');
+    }
+
+    if (new Date(auctionData.startTime) >= new Date(auctionData.endTime)) {
+        throw new Error('startTime must be before endTime');
+    }
+
+    const newAuction = await Auction.create({
+        itemId: auctionData.itemId,
+        startTime: new Date(auctionData.startTime),
+        endTime: new Date(auctionData.endTime),
+        status: new Date() >= new Date(auctionData.startTime) ? 'ongoing' : 'scheduled'
+    });
+
     return newAuction;
 }
 
-// Get all ongoing and upcoming auctions
+// Get all ongoing and scheduled auctions
 async function getAllAuctions() {
-    const auctions = await Auction.find({ status: { $in: ['ongoing', 'scheduled'] } });
+    const auctions = await Auction.find({
+        status: { $in: ['ongoing', 'scheduled'] }
+    }).populate('itemId');
     return auctions;
 }
 
-// Get a single auction by ID with current bids and highest bid
+// Get a single auction by ID with highest bid info and winnerId if completed
 async function getAuctionById(id) {
-    const auction = await Auction.findById(id);
+    const auction = await Auction.findById(id).populate('itemId');
     if (!auction) throw new Error('Auction not found');
-    const highestBid = auction.status === 'completed' && auction.finalPrice ? auction.finalPrice : 0;
-    return { ...auction.toObject(), highestBid };
+
+    // Get top bid if any
+    const topBid = await Bid.findOne({ auctionId: id }).sort({ amount: -1 }).populate('bidderId');
+
+    const highestBid = topBid ? topBid.amount : auction.finalPrice || 0;
+    const winnerId = auction.status === 'completed' && topBid ? topBid.bidderId._id : null;
+
+    return { ...auction.toObject(), highestBid, winnerId };
 }
 
-// Update auction details (status, start/end time)
+// Update auction details
 async function updateAuction(id, updateData) {
-    const auction = await Auction.findById(id); // Fetch auction
+    const auction = await Auction.findById(id);
     if (!auction) throw new Error('Auction not found');
 
-    // Apply updates
     Object.assign(auction, updateData);
-    await auction.save(); // Save updated auction
+    await auction.save();
+
+    // If auction is completed, automatically update finalPrice & winnerId
+    if (auction.status === 'completed') {
+        const topBid = await Bid.findOne({ auctionId: id }).sort({ amount: -1 });
+        if (topBid) {
+            auction.finalPrice = topBid.amount;
+            auction.winnerId = topBid.bidderId;
+            await auction.save();
+        }
+    }
+
     return auction;
 }
 
-// Delete an auction (admin only)
+// Delete an auction
 async function deleteAuction(id) {
     const auction = await Auction.findById(id);
     if (!auction) throw new Error('Auction not found');
+
     await Auction.deleteOne({ _id: id });
     return { message: 'Auction deleted' };
 }
 
-// Export all auction service functions
 module.exports = {
     createAuction,
     getAllAuctions,

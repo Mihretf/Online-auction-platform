@@ -1,54 +1,13 @@
-const User = require('../models/userModel');
-const jwt = require('jsonwebtoken');
+// * Overview:
+// * Handles user management actions: fetching users, updating, deleting. It does not handle password hashing or login—that’s in authController.
 
-// Create a new user
-exports.createUser = async (req, res) => {
-  try {
-    const { username, email, role = 'bidder' } = req.body;
+const User = require('../models/User'); // Import the User model
 
-    // Validate required fields
-    if (!username || !email) {
-      return res.status(400).json({ 
-        message: 'Username and email are required' 
-      });
-    }
-
-    // Check if user already exists
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return res.status(400).json({ 
-        message: 'User with this email already exists' 
-      });
-    }
-
-    // Create new user
-    const newUser = new User({
-      username,
-      email,
-      role,
-      verified: true // Set to true for testing
-    });
-
-    const savedUser = await newUser.save();
-
-    res.status(201).json({
-      message: 'User created successfully',
-      user: savedUser
-    });
-
-  } catch (error) {
-    console.error('Error creating user:', error);
-    res.status(500).json({ 
-      message: 'Internal server error',
-      error: error.message 
-    });
-  }
-};
-
-// Get all users
+// Get all users (for admin)
 exports.getAllUsers = async (req, res) => {
   try {
-    const users = await User.find().sort({ username: 1 });
+    const users = await User.find().select('-password').sort({ username: 1 }); 
+    // Fetch all users, exclude passwords, sort alphabetically by username
     res.status(200).json(users);
   } catch (error) {
     console.error('Error fetching users:', error);
@@ -59,16 +18,15 @@ exports.getAllUsers = async (req, res) => {
   }
 };
 
-// Get user by ID
+// Get a single user by ID
 exports.getUserById = async (req, res) => {
   try {
     const { id } = req.params;
-    
-    const user = await User.findById(id);
+    const user = await User.findById(id).select('-password'); 
+    // Exclude password from returned data
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
-
     res.status(200).json(user);
   } catch (error) {
     console.error('Error fetching user:', error);
@@ -79,47 +37,51 @@ exports.getUserById = async (req, res) => {
   }
 };
 
-// Login user and generate JWT token
-exports.loginUser = async (req, res) => {
+// Update user (admin or user can update certain fields)
+exports.updateUser = async (req, res) => {
   try {
-    const { email } = req.body;
+    const { id } = req.params;
+    const updates = req.body;
 
-    if (!email) {
-      return res.status(400).json({ 
-        message: 'Email is required' 
-      });
+    // Prevent updating password here; password changes go through authController
+    if (updates.password) delete updates.password;
+
+    const updatedUser = await User.findByIdAndUpdate(
+      id,
+      { $set: updates },
+      { new: true }
+    ).select('-password'); // Exclude password in response
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: 'User not found' });
     }
-
-    // Find user by email
-    const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(404).json({ 
-        message: 'User not found' 
-      });
-    }
-
-    // Generate JWT token
-    const token = jwt.sign(
-      { userId: user._id, role: user.role },
-      process.env.JWT_SECRET,
-      { expiresIn: '24h' }
-    );
 
     res.status(200).json({
-      message: 'Login successful',
-      token,
-      user: {
-        id: user._id,
-        username: user.username,
-        email: user.email,
-        role: user.role
-      }
+      message: 'User updated successfully',
+      user: updatedUser
     });
-
   } catch (error) {
-    console.error('Error logging in user:', error);
+    console.error('Error updating user:', error);
     res.status(500).json({ 
-      message: 'Internal server error',
+      message: 'Error updating user',
+      error: error.message 
+    });
+  }
+};
+
+// Delete a user (admin only)
+exports.deleteUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deletedUser = await User.findByIdAndDelete(id);
+    if (!deletedUser) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    res.status(200).json({ message: 'User deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting user:', error);
+    res.status(500).json({ 
+      message: 'Error deleting user',
       error: error.message 
     });
   }

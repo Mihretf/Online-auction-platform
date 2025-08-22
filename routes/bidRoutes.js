@@ -1,9 +1,9 @@
 const express = require("express");
 const router = express.Router();
-const requireAuth = require("../middleware/auth");
+const {authMiddleware} = require("../middleware/authMiddleware");
 const { placeBid, getHighestForItem } = require("../controllers/bidController");
 
-router.post("/place", requireAuth, placeBid);
+router.post("/place", authMiddleware, placeBid);
 router.get("/highest/:itemId", getHighestForItem);
 
 module.exports = router;

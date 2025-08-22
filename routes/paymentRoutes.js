@@ -1,18 +1,18 @@
 const express = require("express");
 const router = express.Router();
-const requireAuth = require("../middleware/auth");
+const {authMiddleware}= require("../middleware/authMiddleware");
 const { initiatePayment, chapaCallback, getPaymentStatus, getPaymentHistory } = require("../controllers/paymentController");
 
 // Start payment (Chapa)
-router.post("/initiate", requireAuth, initiatePayment);
+router.post("/initiate", authMiddleware, initiatePayment);
 
 // Chapa callback
 router.get("/chapa/callback", chapaCallback);
 
 // Check payment status
-router.get("/:id/status", requireAuth, getPaymentStatus);
+router.get("/:id/status", authMiddleware, getPaymentStatus);
 
 // Payment history
-router.get("/history", requireAuth, getPaymentHistory);
+router.get("/history", authMiddleware, getPaymentHistory);
 
 module.exports = router;

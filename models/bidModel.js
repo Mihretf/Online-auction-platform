@@ -7,7 +7,7 @@ const bidSchema = new mongoose.Schema(
     amount: { type: Number, required: true },
     type: { type: String, enum: ["manual", "proxy"], default: "manual" },
     maxBid: { type: Number },
-    status: { type: String, enum: ["pending", "accepted", "rejected"], default: "pending" }
+    status: { type: String, enum: ["pending", "approved", "rejected"], default: "pending" }
   },
   { timestamps: true }
 );

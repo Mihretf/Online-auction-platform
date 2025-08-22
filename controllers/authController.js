@@ -1,3 +1,5 @@
+// *Handles registration, login, and checking current logged-in user. Manages password hashing and JWT tokens.
+
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
