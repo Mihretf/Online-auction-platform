@@ -1,10 +1,9 @@
 const express = require("express");
-const { placeBid } = require("../controllers/bidController");
-
 const router = express.Router();
+const requireAuth = require("../middleware/auth");
+const { placeBid, getHighestForItem } = require("../controllers/bidController");
 
-// @route   POST /api/bids/place
-// @desc    Place a bid on an auction item
-router.post("/place", placeBid);
+router.post("/place", requireAuth, placeBid);
+router.get("/highest/:itemId", getHighestForItem);
 
 module.exports = router;

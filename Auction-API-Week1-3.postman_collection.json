@@ -1,0 +1,169 @@
+{
+    "info": {
+      "name": "Online Auction API (Week 1–3)",
+      "_postman_id": "7c25e9f7-bb12-4a02-a39d-55b1a13cb12f",
+      "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+      "description": "Postman collection covering:\n- Auth (login to get JWT)\n- Bids (manual + proxy, get highest)\n- Payments (pay for closed auction, get history)\n- Utils (health, test)\n\nUse variables: baseUrl, token, itemId, auctionId."
+    },
+    "variable": [
+      { "key": "baseUrl", "value": "http://localhost:5000" },
+      { "key": "token", "value": "" },
+      { "key": "itemId", "value": "" },
+      { "key": "auctionId", "value": "" }
+    ],
+    "item": [
+      {
+        "name": "Auth",
+        "item": [
+          {
+            "name": "Login (get JWT)",
+            "request": {
+              "method": "POST",
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n  \"email\": \"bidder@example.com\"\n}"
+              },
+              "url": {
+                "raw": "{{baseUrl}}/api/auth/login"
+              }
+            },
+            "response": []
+          }
+        ]
+      },
+      {
+        "name": "Bids",
+        "item": [
+          {
+            "name": "Place Manual Bid",
+            "request": {
+              "auth": {
+                "type": "bearer",
+                "bearer": [
+                  { "key": "token", "value": "{{token}}", "type": "string" }
+                ]
+              },
+              "method": "POST",
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n  \"itemId\": \"{{itemId}}\",\n  \"amount\": 9600\n}"
+              },
+              "url": {
+                "raw": "{{baseUrl}}/api/bids/place"
+              }
+            },
+            "response": []
+          },
+          {
+            "name": "Place Proxy Bid",
+            "request": {
+              "auth": {
+                "type": "bearer",
+                "bearer": [
+                  { "key": "token", "value": "{{token}}", "type": "string" }
+                ]
+              },
+              "method": "POST",
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n  \"itemId\": \"{{itemId}}\",\n  \"maxAutoBid\": 12000\n}"
+              },
+              "url": {
+                "raw": "{{baseUrl}}/api/bids/place"
+              }
+            },
+            "response": []
+          },
+          {
+            "name": "Get Highest Bid for Item",
+            "request": {
+              "method": "GET",
+              "url": {
+                "raw": "{{baseUrl}}/api/bids/highest/{{itemId}}"
+              }
+            },
+            "response": []
+          }
+        ]
+      },
+      {
+        "name": "Payments",
+        "item": [
+          {
+            "name": "Pay for Auction",
+            "request": {
+              "auth": {
+                "type": "bearer",
+                "bearer": [
+                  { "key": "token", "value": "{{token}}", "type": "string" }
+                ]
+              },
+              "method": "POST",
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n  \"auctionId\": \"{{auctionId}}\",\n  \"method\": \"card\"\n}"
+              },
+              "url": {
+                "raw": "{{baseUrl}}/api/payments/pay"
+              }
+            },
+            "response": []
+          },
+          {
+            "name": "My Payment History",
+            "request": {
+              "auth": {
+                "type": "bearer",
+                "bearer": [
+                  { "key": "token", "value": "{{token}}", "type": "string" }
+                ]
+              },
+              "method": "GET",
+              "url": {
+                "raw": "{{baseUrl}}/api/payments/history"
+              }
+            },
+            "response": []
+          }
+        ]
+      },
+      {
+        "name": "Utils",
+        "item": [
+          {
+            "name": "API Health",
+            "request": {
+              "method": "GET",
+              "url": {
+                "raw": "{{baseUrl}}/"
+              }
+            },
+            "response": []
+          },
+          {
+            "name": "Test Route",
+            "request": {
+              "method": "GET",
+              "url": {
+                "raw": "{{baseUrl}}/api/test"
+              }
+            },
+            "response": []
+          }
+        ]
+      }
+    ]
+  }
+  
